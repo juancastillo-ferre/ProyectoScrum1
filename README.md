@@ -1,2 +1,2 @@
 # ProyectoScrum1
-Proyecto scrup web star wars
+Proyecto scrum web *Star wars*
