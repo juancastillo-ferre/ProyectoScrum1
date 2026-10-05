@@ -58,16 +58,20 @@ const filtrosCategorias = {
 
 // Cosas del HTML
 
-// Desplegable para seleccionar la categoria (persona, planeta, etc)
-const selectorCategoria = document.getElementById("selectorCategoria") /* Poner Bien en el HTML */
+// Desplegable para seleccionar la categoría (personajes, películas, planetas, etc.)
+const selectorCategoria = document.getElementById("selectorCategoria")
 
-// Sección dentro del div principal (para poner los filtros)
-const filtrosSection = document.getElementById("filtrosSection") /* Poner Bien en el HTML */
-const filtrosContainer = document.getElementById("filtrosContainer") /* Poner Bien en el HTML */
-const filtrosTitle = document.getElementById("filtrosTitle") /* Poner Bien en el HTML */
+// Sección que contiene los filtros
+const filtrosSection = document.getElementById("filtrosSection")
 
+// Div donde el JS crea y coloca los filtros
+const filtrosContainer = document.getElementById("filtrosContainer")
+
+// Título de la sección de filtros
+const filtrosTitle = document.getElementById("filtrosTitle")
 
 // Filtros como tal (En la web, lo de la API lo hace el Jason)
+
 
 function crearFiltros(categoria) {
     filtrosContainer.innerHTML = ""
