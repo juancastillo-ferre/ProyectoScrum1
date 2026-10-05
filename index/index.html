@@ -1,12 +1,50 @@
 <!DOCTYPE html>
 <html lang="es">
     <head>
+        <meta charset="UTF-8">
         <link rel="stylesheet" href="index.css">
-        <title>XXX</title>
+        <title>Archivos de Lothal</title>
     </head>
     <body>
-        <h1>XXX</h1>
-        <p>XXX</p>
+        <header>
+            <h1>Archivos de Lothal</h1>
+            <p>Que la fuerza te acompañe en tu busqueda.</p>
+        </header>
+
+        <section class="buscador">
+            <h3>Busca a tu astro</h3>
+
+            <form id="formulario">
+                <div class="categoria">
+                    <select id="selectorCategoria">
+                        <option value="">Selecciona una categoría... </option>
+                        <option value="personaje">Personaje</option>
+                        <option value="planeta">Planeta</option>
+                        <option value="nave">Nave</option>
+                        <option value="pelicula">Película</option>
+                        <option value="especie">Especie</option>
+                        <option value="vehiculo">Vehículo</option>
+                    </select>
+                </div>
+
+                <div class="busqueda">
+                    <input type="text" placeholder="Escribe el nombre de tu astro..." id="busqueda">
+                </div>
+                <section id="filtrosSection">
+                    <h3 id="filtrosTitle">Filtros de personajes</h3>
+                    <div class="filtros-dinamicos" id="filtrosContainer">
+                    
+                    </div>
+                </section>
+                <button type="submit" id="boton-buscar">Buscar</button>
+            </form>
+        </section>
+
+        <section class="resultados">
+            <h3>Resultados</h3>
+            <div id="resultadosContainer">
+                <p>Realiza una búsqueda para ver los resultados.</p>
+            </div>
         <script src="index.js"></script>
     </body>
 </html>
