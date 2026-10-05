@@ -7,13 +7,13 @@
 
 // Nombres (Cosas de la api)
 
-const categorias = {
-    people: "Personajes",
-    films: "Películas",
-    planets: "Planetas",
-    species: "Especies",
-    vehicles: "Vehículos",
-    starships: "Naves"
+const traductorCategorias = {
+    "Personajes": "people",
+    "Películas": "films",
+    "Planetas": "planets",
+    "Especies": "species",
+    "Vehículos": "vehicles",
+    "Naves Estelares": "starships"
 }
 
 const filtrosCategorias = {
@@ -59,7 +59,7 @@ const filtrosCategorias = {
 // Cosas del HTML
 
 // Desplegable para seleccionar la categoría (personajes, películas, planetas, etc.)
-const selectorCategoria = document.getElementById("selectorCategoria")
+
 
 // Sección que contiene los filtros
 const filtrosSection = document.getElementById("filtrosSection")
@@ -70,105 +70,33 @@ const filtrosContainer = document.getElementById("filtrosContainer")
 // Título de la sección de filtros
 const filtrosTitle = document.getElementById("filtrosTitle")
 
-// Filtros como tal (En la web, lo de la API lo hace el Jason)
 
 
-function crearFiltros(categoria) {
-    filtrosContainer.innerHTML = ""
-
-    const filtros = filtrosCategorias[categoria] || [] // Esto nos da todos los filtros de la categoria (Si no existe [] (lista sin nada))
-
-    // Si no hay filtros oculta el apartado del HTML
-    if (!filtros.length) {
-        filtrosSection.hidden = true
-        return
-    }
-    
-    filtrosSection.hidden = false; // Nos aseguramos de que se vea
-    filtrosTitle.textContent = `Filtros de ${categorias[categoria].toLowerCase()}` // Titulo del apartado
-
-    // Pasamos por todos los filtros que tenga nuestra categoria (la i es el filtro en el que está (1, 2, 3, etc))
-    filtros.forEach((filtro, i) => {
-
-        // le hacemos un div al filtro (para formatear)
-        const grupo = document.createElement("div") 
-
-        // clase del div
-        grupo.className = "field" /* Poner Bien en el CSS */
-
-        // creamos su id "filtro-people-1" (primer filtro de la categoria "people")
-        const id = `filtro-${categoria}-${i}`
-
-        // creamos una etiqueta usando la id (for=) y el nombre del filtro (Lo que se verá)
-        const etiqueta = document.createElement("label") 
-        etiqueta.htmlFor = id
-        etiqueta.textContent = filtro.name
-        grupo.appendChild(etiqueta) // <label for="filtro-people-0"> "nombre del filtro" </label>
+// Filtros como tal (En la web, lo de la API lo hace Jason)
 
 
+function obtenerCategoria() {
+    const selectorCategoria = document.getElementById("selectorCategoria")
+    const categoria = selectorCategoria.value || "people" // Si no hay valor pone "people"
 
-        let control
-
-        // comprobamos si el filtro es de tipo select (seleccionar opciones)
-        if (filtro.type === "select") {
-
-            // Hacemos el select para poner las opciones dentro
-            control = document.createElement("select")
-
-            // Pasamos por todas las opciones del filtro (valor = nombre API y texto = nombre que quiero mostrar)
-            filtro.options.forEach(([valor, texto]) => {
-
-                // Creamos la opcion usando el valor y el texto
-                const opcion = document.createElement("option")
-                opcion.value = valor
-                opcion.textContent = texto
-                control.appendChild(opcion) // <option value="male"> Masculino </option>
-            })
-        } else { // No es un select
-
-            // Creamos el input para poner el filtro (para que lo escriban)
-            control = document.createElement("input")
-            control.type = "search"
-            control.placeholder = filtro.placeholder || "" // Si no tiene placeholder asignado no pone nada
-
-            // Si el filtro es de tipo numero hacemos que solo puedas escribir numeros
-            if (filtro.type === "number") {
-                control.inputMode = "numeric"
-            } // <input type="search" placeholder="Ej. 172"></input>
-
-            
-        }
-
-        // Variables de control (Para leer los filtros)
-        control.id = id
-        control.dataset.filterKey = filtro.key
-        grupo.appendChild(control)
-
-        // Si el filtro tiene su contenido en ingles muestra un aviso
-        if (filtro.english) {
-
-            // Creamos el texto de aviso
-            const aviso = document.createElement("p")
-
-            // Clase del <p> de aviso
-            aviso.className = "filter-hint" /* Poner Bien en el CSS */
-
-            aviso.innerHTML = "<strong>Escribe en inglés.</strong> Los valores de SWAPI están en inglés."
-            grupo.appendChild(aviso) // <p class="filter-hint" >Escribe en inglés. Los valores de SWAPI están en inglés.</p>
-        }
-
-        // Aqui añadimos todo lo del filtro al div
-        filtrosContainer.appendChild(grupo)
-    })
+    return traductorCategorias[categoria]
 }
 
+function obtenerValorBusqueda() {
+    const inputBusqueda = document.getElementById("inputBusqueda")
+    return inputBusqueda.value.trim() // Lo que ha puesto el usuario (sin espacios a los bordes)
+}
+
+const botonBusqueda = document.getElementById("botonBusqueda").onclick = () => {
+    main(obtenerCategoria(), obtenerValorBusqueda());
+}
 
 // Leemos lo que hayan escrito en los filtros
 
-function leerFiltros() {
+function obtenerFiltros() {
     const filtros = {}
 
-    // Leemos todos los elementos con "[data-filter-key]" (asignado en las bariables de control)
+    // Leemos todos los elementos con "[data-filter-key]" (asignado en las variables de control)
     filtrosContainer.querySelectorAll("[data-filter-key]").forEach(control => {
         const valor = control.value.trim() // Lo que ha puesto el usuario (sin espacios a los bordes)
 
@@ -184,14 +112,11 @@ function leerFiltros() {
 
 // Cambio de categoria
 
-selectorCategoria.addEventListener("change", () => {
-    crearFiltros(selectorCategoria.value)
-})
-
 
 // Filtro por defecto (Se ejecutal cuando carga el JS)
 
-crearFiltros("people")async function atacarApi(filtro, nombre) {
+
+async function atacarApi(filtro, nombre) {
     let data;
     if(nombre !== undefined) {
         try {
@@ -212,8 +137,8 @@ crearFiltros("people")async function atacarApi(filtro, nombre) {
     return data.results || [];
 }
 
-async function main() {
-    const resultado = await atacarApi("people", "Luke Skywalker");
+async function main(categoria, valorBusqueda) {
+    const resultado = await atacarApi(categoria, valorBusqueda);
     
     
 
@@ -229,5 +154,3 @@ async function main() {
         console.log('-------------------------');
     });
 }
-
-main();
