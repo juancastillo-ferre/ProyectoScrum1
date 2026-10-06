@@ -58,7 +58,6 @@ const filtrosCategorias = {
 
 // Cosas del HTML
 
-// Desplegable para seleccionar la categoría (personajes, películas, planetas, etc.)
 
 
 // Sección que contiene los filtros
@@ -70,13 +69,9 @@ const filtrosContainer = document.getElementById("filtrosContainer")
 // Título de la sección de filtros
 const filtrosTitle = document.getElementById("filtrosTitle")
 
-
-
-// Filtros como tal (En la web, lo de la API lo hace Jason)
-
+const selectorCategoria = document.getElementById("selectorCategoria")
 
 function obtenerCategoria() {
-    const selectorCategoria = document.getElementById("selectorCategoria")
     const categoria = selectorCategoria.value || "people" // Si no hay valor pone "people"
 
     return traductorCategorias[categoria]
@@ -92,26 +87,40 @@ const botonBusqueda = document.getElementById("botonBusqueda").onclick = () => {
 }
 
 // Leemos lo que hayan escrito en los filtros
+function obtenerFiltros(categoria) {
+    const filtros = []
+    const inputFiltro = document.getElementById("selectorFiltro")
 
-function obtenerFiltros() {
-    const filtros = {}
 
-    // Leemos todos los elementos con "[data-filter-key]" (asignado en las variables de control)
-    filtrosContainer.querySelectorAll("[data-filter-key]").forEach(control => {
-        const valor = control.value.trim() // Lo que ha puesto el usuario (sin espacios a los bordes)
-
-        // Si el filtro tiene contenido lo guardamos
-        if (valor !== "") {
-            filtros[control.dataset.filterKey] = valor.toLowerCase()
-        }
+    filtrosCategorias[categoria].forEach(filtro => {
+        console.log(filtro)
+        filtros.push({
+            filtro // Lo que ha puesto el usuario (sin espacios a los bordes)
+        })
     })
+
+    console.log(filtros) // Para ver los filtros en la consola
 
     return filtros
 }
 
+//carga filtros al cambio de categoria
+selectorCategoria.addEventListener("change", () => {
+    mostrarFiltros(obtenerCategoria())
+});
 
-// Cambio de categoria
+function mostrarFiltros() {
+    const selectorFiltro = document.getElementById("selectorFiltro")
+    selectorFiltro.innerHTML = "" // Limpiamos los filtros anteriores
+    const obteniendoFiltros = obtenerFiltros(obtenerCategoria())
 
+    obteniendoFiltros.forEach(filtro => {
+        const option = document.createElement("option")
+        option.value = filtro.filtro.key
+        option.textContent = filtro.filtro.name
+        selectorFiltro.appendChild(option)
+    })
+}
 
 // Filtro por defecto (Se ejecutal cuando carga el JS)
 
@@ -140,8 +149,9 @@ async function atacarApi(filtro, nombre) {
 async function main(categoria, valorBusqueda) {
     const resultado = await atacarApi(categoria, valorBusqueda);
     
+    console.log(resultado);
     
-
+    //prueba de mostrar los resultados en la consola
     resultado.forEach(personaje => {
         console.log(`Nombre: ${personaje.name}`);
         console.log(`Altura: ${personaje.height}`);
