@@ -122,6 +122,22 @@ function mostrarFiltros() {
     })
 }
 
+function filtrarResultados(resultado, categoria) {
+    const inputs = document.querySelectorAll("#filtros input")
+    let resultadoFiltrado = {}
+    let filtros = obtenerFiltros(categoria)
+
+    return resultado.filter(item => {
+        return [...filtros].every((filtro, i) => {
+            if (inputs[i].value) {
+                if (input === ""){return true}
+            }
+
+            return item[filtro.filtro.key].toString().toLowerCase().includes(inputs[i].value.toLowerCase())
+        })
+    })
+}
+
 // Filtro por defecto (Se ejecutal cuando carga el JS)
 
 
