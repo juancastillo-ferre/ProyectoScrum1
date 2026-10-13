@@ -1,0 +1,23 @@
+header {
+    display:grid;
+    margin: 2rem 30rem 3rem 34rem;
+}
+
+h1 {
+    font-family: 'Georgia', Times New Roman, Times, serif;
+    font-size: 3rem;
+}
+
+.subtitulo {
+    font-family: 'Verdana', Geneva, Tahoma, sans-serif;
+    font-size: 1.2rem;
+    margin-top: 0.5rem;
+    padding-left: 1rem;
+}
+
+.buscador {
+    width: 50%;
+    border: 2px solid #040404;
+    display: grid;
+    margin-bottom: 2rem;
+}
