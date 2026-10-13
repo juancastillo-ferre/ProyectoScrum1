@@ -180,3 +180,35 @@ async function main(categoria, valorBusqueda) {
         console.log('-------------------------');
     });
 }
+
+async function main(categoria, valorBusqueda) {
+    const contenedor = document.getElementById('contenedor-resultados');
+    contenedor.innerHTML = '<p>Cargando datos...</p>';
+
+    const resultado = await atacarApi(categoria, valorBusqueda);
+    contenedor.innerHTML = '';
+
+    if (!resultado || resultado.length === 0) {
+        contenedor.innerHTML = '<p>No se encontraron resultados.</p>';
+        return;
+    }
+
+    resultado.forEach(personaje => {
+        const tarjeta = document.createElement('div');
+        tarjeta.classList.add('tarjeta-personaje');
+
+        tarjeta.innerHTML = `
+            <h3>${personaje.name}</h3>
+            <p><strong>Altura:</strong> ${personaje.height} cm</p>
+            <p><strong>Peso:</strong> ${personaje.mass} kg</p>
+            <p><strong>Color de cabello:</strong> ${personaje.hair_color}</p>
+            <p><strong>Color de piel:</strong> ${personaje.skin_color}</p>
+            <p><strong>Color de ojos:</strong> ${personaje.eye_color}</p>
+            <p><strong>Año de nacimiento:</strong> ${personaje.birth_year}</p>
+            <p><strong>Género:</strong> ${personaje.gender}</p>
+            <hr>
+        `;
+
+        contenedor.appendChild(tarjeta);
+    });
+}
