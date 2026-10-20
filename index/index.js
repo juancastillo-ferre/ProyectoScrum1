@@ -164,12 +164,11 @@ const botonBusqueda = (document.getElementById("botonBusqueda").onclick =
 // Leemos lo que hayan escrito en los filtros
 function obtenerFiltros(categoria) {
     const filtros = [];
-    const inputFiltro = document.getElementById("selectorFiltro");
 
     filtrosCategorias[categoria].forEach((filtro) => {
         console.log(filtro);
         filtros.push({
-            filtro, // Lo que ha puesto el usuario (sin espacios a los bordes)
+            filtro, 
         });
     });
 
@@ -219,10 +218,10 @@ function mostrarFiltros() {
     });
 }
 
-function filtrarResultados(resultado, categoria) {
+function filtrarResultados(resultado) {
     const inputs = document.querySelectorAll("#filtros input");
     let resultadoFiltrado = {};
-    let filtros = obtenerFiltros(categoria);
+    let filtros = obtenerFiltros(obtenerCategoria());
 
     return resultado.filter((item) => {
         return [...filtros].every((filtro, i) => {
@@ -300,4 +299,4 @@ async function main(categoria, valorBusqueda) {
 
 
 selectorCategoria.value = "Personajes"; // Establece el valor por defecto del selector de categoría
-mostrarFiltros(); // Muestra los filtros correspondientes a la categoría por defecto
+mostrarFiltros(); // Muestra los filtros al cargar la pagina
