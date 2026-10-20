@@ -78,11 +78,11 @@ function obtenerCategoria() {
 }
 
 function obtenerValorBusqueda() {
-    const inputBusqueda = document.getElementById("inputBusqueda")
-    return inputBusqueda.value.trim() // Lo que ha puesto el usuario (sin espacios a los bordes)
+    const inputBusqueda = document.getElementById("busqueda")
+    return inputBusqueda.value.trim(); // Lo que ha puesto el usuario (sin espacios a los bordes)
 }
 
-const botonBusqueda = document.getElementById("botonBusqueda").onclick = () => {
+const botonBusqueda = document.getElementById("boton-buscar").onclick = () => {
     main(obtenerCategoria(), obtenerValorBusqueda());
 }
 
@@ -110,7 +110,7 @@ selectorCategoria.addEventListener("change", () => {
 });
 
 function mostrarFiltros() {
-    const selectorFiltro = document.getElementById("selectorFiltro")
+    const selectorFiltro = document.getElementById("filtrosSection")
     selectorFiltro.innerHTML = "" // Limpiamos los filtros anteriores
     const obteniendoFiltros = obtenerFiltros(obtenerCategoria())
 
@@ -119,22 +119,6 @@ function mostrarFiltros() {
         option.value = filtro.filtro.key
         option.textContent = filtro.filtro.name
         selectorFiltro.appendChild(option)
-    })
-}
-
-function filtrarResultados(resultado, categoria) {
-    const inputs = document.querySelectorAll("#filtros input")
-    let resultadoFiltrado = {}
-    let filtros = obtenerFiltros(categoria)
-
-    return resultado.filter(item => {
-        return [...filtros].every((filtro, i) => {
-            if (inputs[i].value) {
-                if (input === ""){return true}
-            }
-
-            return item[filtro.filtro.key].toString().toLowerCase().includes(inputs[i].value.toLowerCase())
-        })
     })
 }
 
@@ -181,34 +165,91 @@ async function main(categoria, valorBusqueda) {
     });
 }
 
+// Listener para controlar el envío del formulario
+document.getElementById('formulario').addEventListener('submit', function (e) {
+    e.preventDefault(); // Evita que se recargue la página
+
+    const categoria = document.getElementById('selectorCategoria').value;
+    const valorBusqueda = document.getElementById('busqueda').value;
+
+    main(categoria, valorBusqueda);
+});
+
+// Función principal modificada para renderizar en tu HTML
 async function main(categoria, valorBusqueda) {
-    const contenedor = document.getElementById('contenedor-resultados');
-    contenedor.innerHTML = '<p>Cargando datos...</p>';
+    const contenedor = document.getElementById('fichasContainer');
+    
+    // Mensaje de carga mientras se llama a la API
+    contenedor.innerHTML = '<p class="mensaje">Buscando en los archivos de Lothal...</p>';
 
     const resultado = await atacarApi(categoria, valorBusqueda);
+
+    // Limpiamos el contenedor antes de mostrar los nuevos resultados
     contenedor.innerHTML = '';
 
+    // Si no hay resultados o ocurrió un error
     if (!resultado || resultado.length === 0) {
-        contenedor.innerHTML = '<p>No se encontraron resultados.</p>';
+        contenedor.innerHTML = '<p class="mensaje">No se encontraron resultados para tu búsqueda.</p>';
         return;
     }
 
+    // Iteramos e insertamos cada personaje en #fichasContainer
     resultado.forEach(personaje => {
-        const tarjeta = document.createElement('div');
+        const tarjeta = document.createElement('article');
         tarjeta.classList.add('tarjeta-personaje');
 
+        // Contenido de la tarjeta con los campos que indicaste
         tarjeta.innerHTML = `
             <h3>${personaje.name}</h3>
-            <p><strong>Altura:</strong> ${personaje.height} cm</p>
-            <p><strong>Peso:</strong> ${personaje.mass} kg</p>
-            <p><strong>Color de cabello:</strong> ${personaje.hair_color}</p>
-            <p><strong>Color de piel:</strong> ${personaje.skin_color}</p>
-            <p><strong>Color de ojos:</strong> ${personaje.eye_color}</p>
-            <p><strong>Año de nacimiento:</strong> ${personaje.birth_year}</p>
-            <p><strong>Género:</strong> ${personaje.gender}</p>
-            <hr>
+            <div class="datos-personaje">
+                <p><strong>Altura:</strong> ${personaje.height} cm</p>
+                <p><strong>Peso:</strong> ${personaje.mass} kg</p>
+                <p><strong>Color de cabello:</strong> ${personaje.hair_color}</p>
+                <p><strong>Color de piel:</strong> ${personaje.skin_color}</p>
+                <p><strong>Color de ojos:</strong> ${personaje.eye_color}</p>
+                <p><strong>Año de nacimiento:</strong> ${personaje.birth_year}</p>
+                <p><strong>Género:</strong> ${personaje.gender}</p>
+            </div>
         `;
+
+        // Evento opcional: al hacer clic abre el modal detallado
+        tarjeta.addEventListener('click', () => abrirModal(personaje));
 
         contenedor.appendChild(tarjeta);
     });
+}
+
+/* ========================================================
+   Funciones del Modal (utilizando la estructura de tu HTML)
+   ======================================================== */
+
+function abrirModal(personaje) {
+    const modal = document.getElementById('modalFons');
+    const nombreElemento = document.getElementById('nombreElemento');
+    const llistaDades = document.getElementById('llistaDades');
+
+    nombreElemento.textContent = personaje.name;
+
+    llistaDades.innerHTML = `
+        <li><strong>Altura:</strong> ${personaje.height} cm</li>
+        <li><strong>Masa/Peso:</strong> ${personaje.mass} kg</li>
+        <li><strong>Color de cabello:</strong> ${personaje.hair_color}</li>
+        <li><strong>Color de piel:</strong> ${personaje.skin_color}</li>
+        <li><strong>Color de ojos:</strong> ${personaje.eye_color}</li>
+        <li><strong>Año de nacimiento:</strong> ${personaje.birth_year}</li>
+        <li><strong>Género:</strong> ${personaje.gender}</li>
+    `;
+
+    modal.style.display = 'flex';
+}
+
+function tancarModal() {
+    document.getElementById('modalFons').style.display = 'none';
+}
+
+function tancarModalExtern(event) {
+    const modal = document.getElementById('modalFons');
+    if (event.target === modal) {
+        modal.style.display = 'none';
+    }
 }
