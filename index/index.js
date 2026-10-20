@@ -265,24 +265,6 @@ async function atacarApi(filtro, nombre) {
     return data.results || [];
 }
 
-async function main(categoria, valorBusqueda) {
-    const resultado = await atacarApi(categoria, valorBusqueda);
-
-    console.log(resultado);
-
-    //prueba de mostrar los resultados en la consola
-    resultado.forEach((personaje) => {
-        console.log(`Nombre: ${personaje.name}`);
-        console.log(`Altura: ${personaje.height}`);
-        console.log(`Peso: ${personaje.mass}`);
-        console.log(`Color de cabello: ${personaje.hair_color}`);
-        console.log(`Color de piel: ${personaje.skin_color}`);
-        console.log(`Color de ojos: ${personaje.eye_color}`);
-        console.log(`Año de nacimiento: ${personaje.birth_year}`);
-        console.log(`Género: ${personaje.gender}`);
-        console.log("-------------------------");
-    });
-}
 
 async function main(categoria, valorBusqueda) {
     const contenedor = document.getElementById("contenedor-resultados");
@@ -318,3 +300,4 @@ async function main(categoria, valorBusqueda) {
 
 
 selectorCategoria.value = "Personajes"; // Establece el valor por defecto del selector de categoría
+mostrarFiltros(); // Muestra los filtros correspondientes a la categoría por defecto
