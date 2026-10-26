@@ -1,604 +1,463 @@
+const API_BASE = "https://swapi.dev/api/";
 
-/* =========================
-   CONFIGURACIÓN
-========================= */
-
-const API = "https://swapi.dev/api/";
-
-const categorias = {
+const categoryNames = {
     people: "Personajes",
     films: "Películas",
     planets: "Planetas",
     species: "Especies",
     vehicles: "Vehículos",
-    starships: "Naves"
+    starships: "Naves",
 };
 
-/* =========================
-   CONFIGURACIÓN DE FILTROS
-========================= */
-
-const filtrosCategorias = {
+// Los filtros se definen aquí y se crean dinámicamente en el HTML desde JavaScript.
+const filterDefinitions = {
     people: [
-        { key: "height", name: "Altura (cm)", placeholder: "Ej. 172", type: "number" },
-        { key: "mass", name: "Peso (kg)", placeholder: "Ej. 77", type: "number" },
+        { name: "height", label: "Altura (cm)", placeholder: "Ej. 172" },
+        { name: "mass", label: "Peso (kg)", placeholder: "Ej. 77" },
         {
-            key: "gender",
-            name: "Género",
+            name: "gender",
+            label: "Género",
             type: "select",
-            options: [
-                ["", "Cualquiera"],
-                ["male", "Masculino"],
-                ["female", "Femenino"],
-                ["n/a", "No aplicable"],
-                ["hermaphrodite", "Hermafrodita"]
-            ]
-        }
+            options: ["male", "female", "n/a", "hermaphrodite"],
+        },
     ],
-
     planets: [
-        { key: "climate", name: "Clima", placeholder: "Ej. Arid", english: true },
-        { key: "terrain", name: "Terreno", placeholder: "Ej. Desert", english: true },
-        { key: "population", name: "Población", placeholder: "Ej. 200000", type: "number" }
+        { name: "climate", label: "Clima", placeholder: "Ej. arid" },
+        { name: "terrain", label: "Terreno", placeholder: "Ej. desert" },
+        { name: "population", label: "Población", placeholder: "Ej. 200000" },
     ],
-
     films: [
-        { key: "director", name: "Director", placeholder: "Ej. George Lucas" },
-        { key: "producer", name: "Productor", placeholder: "Ej. Rick McCallum" },
-        { key: "episode_id", name: "Número del episodio", placeholder: "Ej. 4", type: "number" }
+        {
+            name: "director",
+            label: "Director",
+            placeholder: "Ej. George Lucas",
+        },
+        {
+            name: "producer",
+            label: "Productor",
+            placeholder: "Nombre del productor",
+        },
+        {
+            name: "episode_id",
+            label: "Número de episodio",
+            placeholder: "Ej. 4",
+        },
     ],
-
     species: [
-        { key: "classification", name: "Clasificación biológica", placeholder: "Ej. Mammal", english: true },
-        { key: "language", name: "Idioma", placeholder: "Ej. Shyriiwook", english: true },
-        { key: "designation", name: "Designación", placeholder: "Ej. Sentient", english: true }
+        {
+            name: "classification",
+            label: "Clasificación",
+            placeholder: "Ej. mammal",
+        },
+        { name: "language", label: "Idioma", placeholder: "Ej. Shyriiwook" },
+        {
+            name: "designation",
+            label: "Designación",
+            placeholder: "Ej. sentient",
+        },
     ],
-
     vehicles: [
-        { key: "vehicle_class", name: "Clase de vehículo", placeholder: "Ej. Wheeled", english: true },
-        { key: "manufacturer", name: "Fabricante", placeholder: "Ej. Incom Corporation" },
-        { key: "crew", name: "Número de tripulantes", placeholder: "Ej. 2" }
+        {
+            name: "vehicle_class",
+            label: "Clase de vehículo",
+            placeholder: "Ej. wheeled",
+        },
+        {
+            name: "manufacturer",
+            label: "Fabricante",
+            placeholder: "Fabricante",
+        },
+        { name: "crew", label: "Tripulación", placeholder: "Ej. 2" },
     ],
-
     starships: [
-        { key: "starship_class", name: "Clase de nave", placeholder: "Ej. Starfighter", english: true },
-        { key: "manufacturer", name: "Fabricante", placeholder: "Ej. Incom Corporation" },
-        { key: "crew", name: "Número de tripulantes", placeholder: "Ej. 4" }
-    ]
+        {
+            name: "starship_class",
+            label: "Clase de nave",
+            placeholder: "Ej. Starfighter",
+        },
+        {
+            name: "manufacturer",
+            label: "Fabricante",
+            placeholder: "Fabricante",
+        },
+        { name: "crew", label: "Tripulación", placeholder: "Ej. 4" },
+    ],
 };
 
-/* =========================
-   DATOS PARA LAS FICHAS
-========================= */
-
-const infoDetallada = {
+const detailDefinitions = {
     people: [
-        ["Altura (cm)", "height"],
-        ["Peso (kg)", "mass"],
+        ["Altura", "height", " cm"],
+        ["Peso", "mass", " kg"],
         ["Género", "gender"],
         ["Color de pelo", "hair_color"],
         ["Color de ojos", "eye_color"],
-        ["Color de piel", "skin_color"],
-        ["Año de nacimiento", "birth_year"]
     ],
-
     planets: [
         ["Clima", "climate"],
         ["Terreno", "terrain"],
         ["Población", "population"],
-        ["Diámetro (km)", "diameter"],
-        ["Gravedad", "gravity"],
-        ["Periodo de rotación", "rotation_period"],
-        ["Periodo orbital", "orbital_period"],
-        ["Agua superficial (%)", "surface_water"]
+        ["Diámetro", "diameter", " km"],
     ],
-
     films: [
         ["Episodio", "episode_id"],
         ["Director", "director"],
-        ["Fecha de estreno", "release_date"],
+        ["Estreno", "release_date"],
         ["Productor", "producer"],
-        ["Texto de apertura", "opening_crawl"]
     ],
-
     species: [
         ["Clasificación", "classification"],
         ["Designación", "designation"],
         ["Idioma", "language"],
-        ["Esperanza de vida media", "average_lifespan"],
-        ["Altura media (cm)", "average_height"],
-        ["Color de piel", "skin_colors"],
-        ["Color de pelo", "hair_colors"],
-        ["Color de ojos", "eye_colors"]
+        ["Esperanza de vida", "average_lifespan"],
     ],
-
     vehicles: [
         ["Modelo", "model"],
-        ["Clase de vehículo", "vehicle_class"],
+        ["Clase", "vehicle_class"],
         ["Fabricante", "manufacturer"],
         ["Tripulación", "crew"],
-        ["Pasajeros", "passengers"],
-        ["Velocidad máxima", "max_atmosphering_speed"],
-        ["Coste en créditos", "cost_in_credits"],
-        ["Longitud (m)", "length"]
     ],
-
     starships: [
         ["Modelo", "model"],
-        ["Clase de nave", "starship_class"],
+        ["Clase", "starship_class"],
         ["Fabricante", "manufacturer"],
         ["Tripulación", "crew"],
-        ["Pasajeros", "passengers"],
-        ["Velocidad máxima", "max_atmosphering_speed"],
-        ["Coste en créditos", "cost_in_credits"],
-        ["Longitud (m)", "length"],
-        ["Hiperimpulsor", "hyperdrive_rating"],
-        ["MGLT", "MGLT"]
-    ]
+    ],
 };
 
-const traducciones = {
-    gender: {
-        male: "Masculino",
-        female: "Femenino",
-        "n/a": "No aplicable",
-        hermaphrodite: "Hermafrodita"
-    }
-};
+const form = document.getElementById("formulario");
+const categorySelect = document.getElementById("selectorCategoria");
+const searchInput = document.getElementById("busqueda");
+const filtersSection = document.getElementById("filtrosSection");
+const filtersContainer = document.getElementById("filtrosContainer");
+const filtersTitle = document.getElementById("filtrosTitle");
+const statusElement = document.getElementById("status");
+const resultsElement = document.getElementById("resultados");
+const resultsTitle = document.getElementById("resultsTitle");
+const resultCount = document.getElementById("resultCount");
 
-/* =========================
-   ELEMENTOS DEL HTML
-========================= */
+// Panel de detalle: se crea desde JavaScript, no hace falta añadirlo a mano al HTML.
+const detailDialog = document.createElement("dialog");
+detailDialog.className = "detail-dialog";
+detailDialog.innerHTML = `
+  <div class="dialog-header">
+    <h2 id="detailTitle">Detalle</h2>
+    <button type="button" class="close-dialog" aria-label="Cerrar">×</button>
+  </div>
+  <div id="detailContent" class="detail-content"></div>
+`;
+document.body.appendChild(detailDialog);
+detailDialog
+    .querySelector(".close-dialog")
+    .addEventListener("click", () => detailDialog.close());
+detailDialog.addEventListener("click", (event) => {
+    if (event.target === detailDialog) detailDialog.close();
+});
 
-// Formulario y búsqueda
-const formulario = document.getElementById("formulario");
-const selectorCategoria = document.getElementById("selectorCategoria");
-const campoBusqueda = document.getElementById("busqueda");
-
-// Filtros
-const filtrosSection = document.getElementById("filtrosSection");
-const filtrosContainer = document.getElementById("filtrosContainer");
-const filtrosTitle = document.getElementById("filtrosTitle");
-
-// Resultados
-const fichasContainer = document.getElementById("fichasContainer");
-const resultadosTitle = document.querySelector(".resultados h2");
-
-// Modal
-const modal = document.getElementById("modalFons");
-const modalTitle = document.getElementById("nombreElemento");
-const modalBody = document.getElementById("llistaDades");
-const modalImagen = document.getElementById("imagenElemento");
-
-// Caché para no volver a consultar relaciones ya resueltas
-const cacheNombres = new Map();
-
-// Estado de la aplicación
-let resultadosActuales = [];
-let categoriaActual = "people";
-let filtrosActuales = {};
-
-/* =========================
-   FUNCIONES AUXILIARES
-========================= */
-
-function escaparHTML(valor) {
-    return String(valor ?? "")
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+function escapeHtml(value) {
+    return String(value ?? "").replace(
+        /[&<>"']/g,
+        (character) =>
+            ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;",
+            })[character],
+    );
 }
-
-function obtenerNombre(item) {
-    return item.name || item.title || "Sin nombre";
-}
-
-function traducirValor(campo, valor) {
-    if (valor === undefined || valor === null || valor === "") {
-        return "Sin datos";
-    }
-
-    const texto = String(valor);
-
-    return traducciones[campo]?.[texto] || texto;
-}
-
-async function obtenerJSON(url) {
-    const respuesta = await fetch(url);
-
-    if (!respuesta.ok) {
-        throw new Error(`Error al consultar la API: ${respuesta.status}`);
-    }
-
-    return respuesta.json();
-}
-
-/* =========================
-   CREACIÓN DE FILTROS
-========================= */
 
 function crearFiltros(categoria) {
-    filtrosContainer.innerHTML = "";
+    filtersContainer.replaceChildren();
 
-    const definiciones = filtrosCategorias[categoria] || [];
-
-    filtrosSection.hidden = definiciones.length === 0;
-
-    filtrosTitle.textContent =
-        `Filtros de ${(categorias[categoria] || "").toLowerCase()}`;
-
-    definiciones.forEach((filtro, indice) => {
-        const grupo = document.createElement("div");
-        grupo.className = "field";
-
-        const id = `filtro-${categoria}-${indice}`;
-
-        const etiqueta = document.createElement("label");
-        etiqueta.htmlFor = id;
-        etiqueta.textContent = filtro.name;
-        grupo.appendChild(etiqueta);
-
-        let control;
-
-        if (filtro.type === "select") {
-            control = document.createElement("select");
-
-            filtro.options.forEach(([valor, texto]) => {
-                const opcion = document.createElement("option");
-                opcion.value = valor;
-                opcion.textContent = texto;
-                control.appendChild(opcion);
-            });
-        } else {
-            control = document.createElement("input");
-
-            // El tipo number permite introducir valores numéricos.
-            control.type = filtro.type === "number" ? "number" : "search";
-            control.placeholder = filtro.placeholder || "";
-
-            if (filtro.type === "number") {
-                control.min = "0";
-                control.step = "any";
-            }
-        }
-
-        control.id = id;
-        control.dataset.filterKey = filtro.key;
-
-        grupo.appendChild(control);
-
-        if (filtro.english) {
-            const aviso = document.createElement("p");
-            aviso.className = "filter-hint";
-            aviso.innerHTML =
-                "<strong>Escribe en inglés.</strong> Los datos de SWAPI están en inglés.";
-            grupo.appendChild(aviso);
-        }
-
-        filtrosContainer.appendChild(grupo);
-    });
-}
-
-function leerFiltros() {
-    const filtros = {};
-
-    filtrosContainer.querySelectorAll("[data-filter-key]").forEach(control => {
-        const valor = control.value.trim();
-
-        if (valor !== "") {
-            filtros[control.dataset.filterKey] = valor.toLowerCase();
-        }
-    });
-
-    return filtros;
-}
-
-/* =========================
-   BÚSQUEDA EN SWAPI
-========================= */
-
-async function buscarEnAPI(categoria, busqueda) {
-    const url = new URL(`${API}${categoria}/`);
-
-    if (busqueda) {
-        url.searchParams.set("search", busqueda);
-    }
-
-    const datos = await obtenerJSON(url.toString());
-
-    // Guardamos la categoría para saber qué datos mostrar.
-    return datos.results.map(item => ({
-        ...item,
-        _categoria: categoria
-    }));
-}
-
-/* =========================
-   APLICAR FILTROS
-========================= */
-
-function coincideFiltro(item, campo, valor) {
-    const dato = item[campo];
-
-    if (dato === undefined || dato === null) {
-        return false;
-    }
-
-    return String(dato).toLowerCase().includes(valor);
-}
-
-function aplicarFiltrosYMostrar() {
-    const resultadosFiltrados = resultadosActuales.filter(item => {
-        const definiciones = filtrosCategorias[item._categoria] || [];
-
-        return definiciones.every(filtro => {
-            const valor = filtrosActuales[filtro.key];
-
-            if (!valor) {
-                return true;
-            }
-
-            return coincideFiltro(item, filtro.key, valor);
-        });
-    });
-
-    mostrarResultados(resultadosFiltrados);
-}
-
-/* =========================
-   MOSTRAR TARJETAS
-========================= */
-
-function crearTarjeta(item) {
-    const categoria = item._categoria;
-    const tarjeta = document.createElement("button");
-
-    tarjeta.type = "button";
-    tarjeta.className = "result-card";
-
-    const detalles = infoDetallada[categoria] || [];
-
-    let contenido = `
-        <span class="card-category">
-            ${escaparHTML(categorias[categoria])}
-        </span>
-        <h3>${escaparHTML(obtenerNombre(item))}</h3>
-        <div class="card-details">
-    `;
-
-    detalles.slice(0, 3).forEach(([etiqueta, campo]) => {
-        if (item[campo] !== undefined && item[campo] !== "") {
-            contenido += `
-                <div>
-                    <strong>${escaparHTML(etiqueta)}:</strong>
-                    ${escaparHTML(traducirValor(campo, item[campo]))}
-                </div>
-            `;
-        }
-    });
-
-    contenido += "</div>";
-
-    tarjeta.innerHTML = contenido;
-
-    tarjeta.addEventListener("click", () => {
-        abrirDetalles(item);
-    });
-
-    return tarjeta;
-}
-
-function mostrarResultados(lista) {
-    fichasContainer.innerHTML = "";
-
-    if (lista.length === 0) {
-        fichasContainer.textContent =
-            "No se han encontrado resultados con esos criterios.";
-    } else {
-        lista.forEach(item => {
-            fichasContainer.appendChild(crearTarjeta(item));
-        });
-    }
-
-    resultadosTitle.textContent =
-        `${categorias[categoriaActual]} encontrados (${lista.length})`;
-}
-
-/* =========================
-   DETALLES Y RELACIONES
-========================= */
-
-async function resolverValor(valor) {
-    if (Array.isArray(valor)) {
-        const resultados = await Promise.all(
-            valor.map(resolverValor)
-        );
-
-        return resultados.join(", ") || "Sin datos";
-    }
-
-    if (typeof valor === "string" && /^https?:\/\//i.test(valor)) {
-        if (cacheNombres.has(valor)) {
-            return cacheNombres.get(valor);
-        }
-
-        try {
-            const datos = await obtenerJSON(valor);
-            const nombre = obtenerNombre(datos);
-
-            cacheNombres.set(valor, nombre);
-
-            return nombre;
-        } catch {
-            return "No disponible";
-        }
-    }
-
-    return traducirValor("", valor);
-}
-
-async function abrirDetalles(item) {
-    modal.hidden = false;
-    document.body.style.overflow = "hidden";
-
-    modalTitle.textContent = obtenerNombre(item);
-    modalBody.innerHTML = "";
-
-    // SWAPI no proporciona imágenes de los personajes o planetas.
-    modalImagen.hidden = true;
-    modalImagen.removeAttribute("src");
-
-    const categoria = item._categoria;
-    const campos = infoDetallada[categoria] || [];
-
-    const liCarga = document.createElement("li");
-    liCarga.textContent = "Cargando detalles...";
-    modalBody.appendChild(liCarga);
-
-    try {
-        const detalles = [];
-
-        for (const [etiqueta, campo] of campos) {
-            const valor = item[campo];
-
-            if (valor !== undefined && valor !== null && valor !== "") {
-                detalles.push([
-                    etiqueta,
-                    await resolverValor(valor)
-                ]);
-            }
-        }
-
-        const relaciones = {
-            homeworld: "Planeta de origen",
-            films: "Películas",
-            species: "Especies",
-            vehicles: "Vehículos",
-            starships: "Naves",
-            people: "Personajes",
-            residents: "Habitantes",
-            pilots: "Pilotos",
-            characters: "Personajes",
-            planets: "Planetas"
-        };
-
-        for (const [campo, etiqueta] of Object.entries(relaciones)) {
-            if (
-                item[campo] &&
-                !campos.some(([, clave]) => clave === campo)
-            ) {
-                detalles.push([
-                    etiqueta,
-                    await resolverValor(item[campo])
-                ]);
-            }
-        }
-
-        modalBody.innerHTML = "";
-
-        if (detalles.length === 0) {
-            const li = document.createElement("li");
-            li.textContent = "No hay detalles disponibles.";
-            modalBody.appendChild(li);
-        } else {
-            detalles.forEach(([etiqueta, valor]) => {
-                const li = document.createElement("li");
-                const strong = document.createElement("strong");
-
-                strong.textContent = `${etiqueta}: `;
-                li.appendChild(strong);
-                li.appendChild(document.createTextNode(valor));
-
-                modalBody.appendChild(li);
-            });
-        }
-    } catch (error) {
-        console.error(error);
-        modalBody.innerHTML = "";
-
-        const li = document.createElement("li");
-        li.textContent = "No se han podido cargar los detalles.";
-        modalBody.appendChild(li);
-    }
-}
-
-/* =========================
-   CERRAR MODAL
-========================= */
-
-// Estas funciones también permiten usar los onclick de tu HTML.
-function tancarModal() {
-    modal.hidden = true;
-    document.body.style.overflow = "";
-}
-
-function tancarModalExtern(event) {
-    if (event.target === modal) {
-        tancarModal();
-    }
-}
-
-document.getElementById("cerrarModal").addEventListener("click", tancarModal);
-
-document.addEventListener("keydown", event => {
-    if (event.key === "Escape" && !modal.hidden) {
-        tancarModal();
-    }
-});
-
-/* =========================
-   EVENTOS DEL FORMULARIO
-========================= */
-
-selectorCategoria.addEventListener("change", () => {
-    categoriaActual = selectorCategoria.value;
-
-    crearFiltros(categoriaActual);
-    fichasContainer.innerHTML = "";
-});
-
-formulario.addEventListener("submit", async event => {
-    event.preventDefault();
-
-    categoriaActual = selectorCategoria.value;
-
-    if (!categoriaActual || !categorias[categoriaActual]) {
-        fichasContainer.textContent =
-            "Selecciona una categoría antes de buscar.";
+    if (categoria === "all") {
+        filtersSection.hidden = true;
         return;
     }
 
-    const busqueda = campoBusqueda.value.trim();
+    filtersSection.hidden = false;
+    filtersTitle.textContent = `Filtros de ${categoryNames[categoria].toLowerCase()}`;
 
-    filtrosActuales = leerFiltros();
-    fichasContainer.textContent = "Cargando resultados...";
+    const definitions = filterDefinitions[categoria] || [];
+    definitions.forEach((definition) => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "filter-field";
+
+        const label = document.createElement("label");
+        label.htmlFor = `filter-${definition.name}`;
+        label.textContent = definition.label;
+        wrapper.appendChild(label);
+
+        let control;
+        if (definition.type === "select") {
+            control = document.createElement("select");
+            const anyOption = document.createElement("option");
+            anyOption.value = "";
+            anyOption.textContent = "Cualquiera";
+            control.appendChild(anyOption);
+
+            definition.options.forEach((optionText) => {
+                const option = document.createElement("option");
+                option.value = optionText;
+                option.textContent = optionText;
+                control.appendChild(option);
+            });
+        } else {
+            control = document.createElement("input");
+            control.type = "text";
+            control.placeholder = definition.placeholder || "";
+        }
+
+        control.id = `filter-${definition.name}`;
+        control.dataset.filterName = definition.name;
+        wrapper.appendChild(control);
+        filtersContainer.appendChild(wrapper);
+    });
+}
+
+function recogerFiltros() {
+    const categoria = categorySelect.value;
+    const campos = {};
+
+    filtersContainer
+        .querySelectorAll("[data-filter-name]")
+        .forEach((control) => {
+            const value = control.value.trim();
+            if (value) campos[control.dataset.filterName] = value;
+        });
+
+    return {
+        categoria,
+        busqueda: searchInput.value.trim(),
+        campos,
+    };
+}
+
+function construirUrl(categoria, busqueda) {
+    const params = new URLSearchParams();
+    if (busqueda) params.set("search", busqueda);
+    return `${API_BASE}${categoria}/?${params.toString()}`;
+}
+
+async function obtenerTodos(categoria, busqueda = "") {
+    let url = construirUrl(categoria, busqueda);
+    const elementos = [];
+
+    // SWAPI pagina los resultados: seguimos el enlace "next" hasta terminar.
+    while (url) {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error(`Error HTTP ${response.status}`);
+        const data = await response.json();
+        elementos.push(...data.results);
+        url = data.next;
+    }
+
+    return elementos;
+}
+
+function coincide(valor, filtro) {
+    return String(valor ?? "")
+        .toLowerCase()
+        .includes(String(filtro).toLowerCase());
+}
+
+function aplicarFiltrosLocales(items, campos) {
+    return items.filter((item) =>
+        Object.entries(campos).every(([campo, valor]) =>
+            coincide(item[campo], valor),
+        ),
+    );
+}
+
+function obtenerNombre(item, categoria) {
+    return categoria === "films" ? item.title : item.name;
+}
+
+function crearDetalles(item, categoria) {
+    return (detailDefinitions[categoria] || [])
+        .map(([label, key, suffix = ""]) => {
+            if (
+                item[key] === undefined ||
+                item[key] === null ||
+                item[key] === ""
+            )
+                return "";
+            return `<p class="detail"><strong>${escapeHtml(label)}:</strong> ${escapeHtml(item[key])}${suffix}</p>`;
+        })
+        .join("");
+}
+
+function etiquetaCampo(key) {
+    return key
+        .replace(/_/g, " ")
+        .replace(/\b\w/g, (letter) => letter.toUpperCase());
+}
+
+function mostrarDetalle(item, categoria) {
+    const tipo = item.__category || categoria;
+    const titulo = obtenerNombre(item, tipo) || "Detalle";
+    document.getElementById("detailTitle").textContent = titulo;
+    const content = document.getElementById("detailContent");
+    content.replaceChildren();
+
+    Object.entries(item).forEach(([key, value]) => {
+        if (key === "__category" || key === "url") return;
+        const row = document.createElement("section");
+        row.className = "detail-row";
+
+        const label = document.createElement("h3");
+        label.textContent = etiquetaCampo(key);
+        row.appendChild(label);
+
+        if (Array.isArray(value)) {
+            if (value.length === 0) {
+                const empty = document.createElement("p");
+                empty.textContent = "Sin datos";
+                row.appendChild(empty);
+            } else {
+                const list = document.createElement("ul");
+                value.forEach((entry) => {
+                    const li = document.createElement("li");
+                    li.textContent = String(entry);
+                    list.appendChild(li);
+                });
+                row.appendChild(list);
+            }
+        } else {
+            const text = document.createElement("p");
+            text.textContent =
+                value === null || value === "" ? "Sin datos" : String(value);
+            row.appendChild(text);
+        }
+
+        content.appendChild(row);
+    });
+
+    // Algunas respuestas incluyen una sinopsis/crawl (por ejemplo, las películas).
+    if (tipo === "films" && item.opening_crawl) {
+        const section = document.createElement("section");
+        section.className = "detail-row opening-crawl";
+        const heading = document.createElement("h3");
+        heading.textContent = "Texto de apertura";
+        const crawl = document.createElement("p");
+        crawl.textContent = item.opening_crawl;
+        section.append(heading, crawl);
+        content.prepend(section);
+    }
+
+    detailDialog.showModal();
+}
+
+function mostrarResultados(items, categoria) {
+    resultsElement.replaceChildren();
+
+    if (items.length === 0) {
+        const empty = document.createElement("div");
+        empty.className = "empty-state";
+        empty.textContent = "No se han encontrado resultados con esos filtros.";
+        resultsElement.appendChild(empty);
+        resultCount.textContent = "0 resultados";
+        return;
+    }
+
+    const fragment = document.createDocumentFragment();
+
+    items.forEach((item) => {
+        const tipo = item.__category || categoria;
+        const card = document.createElement("article");
+        card.className = "result-card result-card-clickable";
+        card.tabIndex = 0;
+        card.setAttribute("role", "button");
+        card.setAttribute(
+            "aria-label",
+            `Ver detalles de ${obtenerNombre(item, tipo) || "resultado"}`,
+        );
+        card.addEventListener("click", () => mostrarDetalle(item, tipo));
+        card.addEventListener("keydown", (event) => {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                mostrarDetalle(item, tipo);
+            }
+        });
+
+        
+
+        const heading = document.createElement("h3");
+        heading.textContent = obtenerNombre(item, tipo) || "Sin nombre";
+
+        card.append(heading);
+        card.insertAdjacentHTML("beforeend", crearDetalles(item, tipo));
+        fragment.appendChild(card);
+    });
+
+    resultsElement.appendChild(fragment);
+    resultCount.textContent = `${items.length} resultado${items.length === 1 ? "" : "s"}`;
+}
+
+async function buscarEnAPI(filtros) {
+    statusElement.textContent = "Buscando en SWAPI…";
+    resultsElement.replaceChildren();
 
     try {
-        resultadosActuales = await buscarEnAPI(
-            categoriaActual,
-            busqueda
-        );
+        let resultados;
 
-        aplicarFiltrosYMostrar();
+        if (filtros.categoria === "all") {
+            const categorias = Object.keys(categoryNames);
+            const listas = await Promise.all(
+                categorias.map(async (categoria) => {
+                    const items = await obtenerTodos(
+                        categoria,
+                        filtros.busqueda,
+                    );
+                    return items.map((item) => ({
+                        ...item,
+                        __category: categoria,
+                    }));
+                }),
+            );
+            resultados = listas.flat();
+            resultsTitle.textContent = "Todos los tipos";
+        } else {
+            resultados = await obtenerTodos(
+                filtros.categoria,
+                filtros.busqueda,
+            );
+            resultados = aplicarFiltrosLocales(resultados, filtros.campos);
+            resultsTitle.textContent = categoryNames[filtros.categoria];
+        }
+
+        mostrarResultados(resultados, filtros.categoria);
+        statusElement.textContent = "Búsqueda completada.";
     } catch (error) {
-        console.error(error);
-
-        fichasContainer.textContent =
-            "No se han podido cargar los resultados. Comprueba tu conexión e inténtalo de nuevo.";
+        statusElement.textContent =
+            "No se ha podido conectar con SWAPI. Comprueba tu conexión e inténtalo de nuevo.";
+        const message = document.createElement("div");
+        message.className = "empty-state";
+        message.textContent = error.message;
+        resultsElement.replaceChildren(message);
+        resultCount.textContent = "";
     }
+}
+
+categorySelect.addEventListener("change", () => {
+    crearFiltros(categorySelect.value);
+    buscarEnAPI(recogerFiltros());
 });
 
-/* =========================
-   INICIO
-========================= */
+form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    buscarEnAPI(recogerFiltros());
+});
 
-// Ocultamos el modal al cargar la página.
-modal.hidden = true;
+/*
+document.getElementById("resetButton").addEventListener("click", () => {
+  form.reset();
+  crearFiltros(categorySelect.value);
+  buscarEnAPI(recogerFiltros());
+});
+*/
 
-// Seleccionamos Personajes como categoría inicial.
-selectorCategoria.value = "people";
-categoriaActual = "people";
-
-crearFiltros(categoriaActual);
+// Al cargar, los filtros y las tarjetas se generan con JavaScript.
+// La lista inicial es la de todos los personajes.
+crearFiltros(categorySelect.value);
+buscarEnAPI(recogerFiltros());

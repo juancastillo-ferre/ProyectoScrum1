@@ -6,7 +6,6 @@
         <link rel="stylesheet" href="index.css">
         <title>Archivos de Lothal</title>
     </head>
-    <body>
         <header>
             <h1>Archivos de Lothal</h1>
             <p class="subtitulo">Que la fuerza te acompañe en tu busqueda.</p>
@@ -42,15 +41,19 @@
                 <button type="submit" id="boton-buscar">Buscar</button>
             </form>
         </section>
+        <div id="resultados-header">
+            <h2 id="resultsTitle">Personajes encontrados</h2>
 
-        <section class="resultados">
-            <h2>Personajes encontrados</h2>
-
+        </div>
+        <section id="resultados" class="resultados-grid">
+            <span id="resultCount" class="resultCount"></span>
             <div id="fichasContainer">
                 
             </div>
         </section>
     </div>
+
+        <p id="status" class="status" role="status" aria-live="polite">Cargando personajes…</p>
 
         <div id="modalFons" onclick="tancarModalExtern(event)">
             <div id="fichaDetallada">
@@ -65,6 +68,7 @@
                 </div>
             </div>
         </div>
+
 
         <script src="index.js" defer></script>
     </body>

@@ -142,6 +142,19 @@ h1 {
     max-width: 850px;
 }
 
+.result-card  {
+    width: 15rem;
+    height: 20rem;
+    justify-content: center;
+    align-items: center;
+    background-color: #ffffff;
+    border: 2.5px solid #000000;
+    box-shadow: 3px 3px 0px #000000;
+    padding: 0.8rem 1.2rem;
+
+
+}
+
 /* --- FICHA DETALLADA / MODAL --- */
 #modalFons {
     display: none; /* Se activa mediante JS cambiando a 'flex' */
@@ -154,6 +167,7 @@ h1 {
     justify-content: center;
     align-items: center;
     z-index: 1000;
+    
 }
 
 /* Caja principal de la ficha detallada */
@@ -163,4 +177,11 @@ h1 {
     width: 90%;
     max-width: 850px; /* Mismo tamaño ampliado que el buscador */
     position: relative;
+    
+}
+
+.resultados-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
 }
