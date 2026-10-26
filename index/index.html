@@ -1,58 +1,69 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Buscador de Star Wars</title>
-  <link rel="stylesheet" href="styles.css">
-  <script src="prueba.js" defer></script>
-</head>
-<body>
-  <main class="container">
-    <header class="page-header">
-      <h1>Buscador de Star Wars</h1>
-      <p>Busca personajes, películas, planetas, especies, vehículos y naves usando SWAPI.</p>
-    </header>
-    <form id="searchForm" class="panel">
-      <div class="top-grid">
-        <div class="field">
-          <label for="selectorCategoria">Categoría</label>
-          <select id="selectorCategoria" name="category">
-            <option value="people">Personajes</option>
-            <option value="films">Películas</option>
-            <option value="planets">Planetas</option>
-            <option value="species">Especies</option>
-            <option value="vehicles">Vehículos</option>
-            <option value="starships">Naves</option>
-            <option value="all">Todos los tipos</option>
-          </select>
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="index.css">
+        <title>Archivos de Lothal</title>
+    </head>
+    <body>
+        <header>
+            <h1>Archivos de Lothal</h1>
+            <p>Que la fuerza te acompañe en tu busqueda.</p>
+        </header>
+
+        <section class="buscador">
+            <h3>Busca a tu astro</h3>
+
+            <form id="formulario">
+                <div class="categoria">
+                    <select id="selectorCategoria" name="category">
+                        <option value="">Selecciona una categoría... </option>
+                        <option value="people">Personaje</option>
+                        <option value="planets">Planeta</option>
+                        <option value="starships">Nave</option>
+                        <option value="films">Película</option>
+                        <option value="species">Especie</option>
+                        <option value="vehicles">Vehículo</option>
+                        <option value="all">Todos</option>
+                    </select>
+                </div>
+
+                <div class="busqueda">
+                    <input type="text" placeholder="Escribe el nombre de tu astro..." id="busqueda">
+                </div>
+                <section id="filtrosSection">
+                    <h3 id="filtrosTitle">Filtros de personajes</h3>
+                    <div class="filtros-dinamicos" id="filtrosContainer">
+                    
+                    </div>
+                </section>
+                <button type="submit" id="boton-buscar">Buscar</button>
+            </form>
+        </section>
+
+        <section class="resultados">
+            <h2>Personajes encontrados</h2>
+
+            <div id="fichasContainer">
+                
+            </div>
+        </section>
+
+
+        <div id="modalFons" onclick="tancarModalExtern(event)">
+            <div id="fichaDetallada">
+                <span id="cerrarModal" onclick="tancarModal()">&times;</span>
+
+                <h2 id="nombreElemento"></h2>
+                <div class="información">
+                    <ul id="llistaDades"></ul>
+                </div>
+                <div class="imagen">
+                    <img id="imagenElemento" src="" alt="imagen elemento">
+                </div>
+            </div>
         </div>
-        <div class="field">
-          <label for="search">Búsqueda general</label>
-          <input id="search" name="search" type="search" placeholder="Ej. Luke, Tatooine…">
-        </div>
-      </div>
-      <section id="filtrosSection" class="filters-section">
-        <h2 id="filtrosTitle">Filtros de personajes</h2>
-        <div id="filtrosContainer" class="filter-grid"></div>
-      </section>
-      <div class="actions">
-        <button class="button primary" type="submit">
-          Buscar / aplicar filtros
-        </button>
-        <button class="button secondary" id="resetButton" type="button">
-          Restablecer
-        </button>
-      </div>
-    </form>
-    <p id="status" class="status" role="status" aria-live="polite">
-      Cargando personajes…
-    </p>
-    <div class="results-heading">
-      <h2 id="resultsTitle">Personajes</h2>
-      <span id="resultCount" class="result-count"></span>
-    </div>
-    <section id="results" class="results-grid" aria-live="polite"></section>
-  </main>
-</body>
+
+        <script src="prueba.js" defer></script>
+    </body>
 </html>
